@@ -1,0 +1,129 @@
+server:
+  port: 8607
+
+spring:
+  application:
+    name: dd-gateway
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    nacos:
+      username: nacos
+      password: nacos
+      discovery:
+        server-addr: 127.0.0.1:8848
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yaml
+    gateway:
+      globalcors:
+        # gateway 跨域设置
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:
+              - "*"
+
+#              - "http://localhost:9528"
+#              - "http://localhost:1024"
+#              - "http://localhost:1025"
+            allowedHeaders: "*"
+            allowCredentials: true
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - OPTIONS
+      # 设置与服务注册发现组件结合，这样可以采用服务名的路由策略
+      discovery:
+        locator:
+          enabled: true
+      # 配置路由规则
+      routes:
+        # 采用自定义路由 ID（有固定用法，不同的 id 有不同的功能，详见：https://cloud.spring.io/spring-cloud-gateway/2.0.x/single/spring-cloud-gateway.html#gateway-route-filters）
+        - id: dd_admin
+          # 采用 LoadBalanceClient 方式请求，以 lb:// 开头，后面的是注册在 Nacos 上的服务名
+          uri: lb://dd-admin
+          # Predicate 翻译过来是“谓词”的意思，必须，主要作用是匹配用户的请求，有很多种用法
+          predicates:
+            # 路径匹配，以 api 开头，直接配置是不生效的，看 filters 配置
+            - Path=/dd-admin/**
+          filters:
+            # 前缀过滤，默认配置下，我们的请求路径是 http://localhost:8888/business-oauth2/** 这时会路由到指定的服务
+            # 此处配置去掉 1 个路径前缀，再配置上面的 Path=/api/**，就能按照 http://localhost:8888/api/** 的方式访问了
+            - StripPrefix=1
+        - id: dd_web
+          uri: lb://dd-web
+          predicates:
+            - Path=/dd-web/**
+          filters:
+            - StripPrefix=1
+        - id: dd_search
+          uri: lb://dd-search
+          predicates:
+            - Path=/dd-search/**
+          filters:
+            - StripPrefix=1
+        - id: dd_picture
+          uri: lb://dd-picture
+          predicates:
+            - Path=/dd-picture/**
+          filters:
+            - StripPrefix=1
+        - id: dd_spider
+          uri: lb://dd-spider
+          predicates:
+            - Path=/dd-spider/**
+          filters:
+            - StripPrefix=1
+        - id: dd_monitor
+          uri: lb://dd-monitor
+          predicates:
+            - Path=/dd-monitor/**
+          filters:
+            - StripPrefix=1
+        - id: dd_auth
+          uri: lb://dd-auth
+          predicates:
+            - Path=/dd-auth/**
+          filters:
+            - StripPrefix=1
+
+  security:
+    oauth2:
+      client:
+        access-token-uri: http://127.0.0.1:8500/oauth/token
+      resourceserver:
+        jwt:
+          #配置RSA的公钥访问地址
+          jwk-set-uri: 'http://localhost:8500/rsa/publicKey'
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+
+security:
+  oauth2:
+    client:
+      # 获取token接口
+      access-token-uri: http://127.0.0.1:xxx/oauth/token
+
+#YML文件加密解密
+jasypt:
+  encryptor:
+    password: modebing
+    algorithm: PBEWithMD5AndDES
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+
+secure:
+  ignore:
+    urls: #配置白名单路径
+      - "/actuator/**"
+      - "/dd-auth/oauth/token"
+      - "/dd-admin/index/getNewBlog"
+      - "/dd-admin/logout"
+      - "/dd-admin/captcha"
+      -
