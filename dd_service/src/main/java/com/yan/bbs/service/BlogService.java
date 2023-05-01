@@ -90,5 +90,15 @@ public interface BlogService extends IService<Blog> {
      * @return
      */
     R deleteById(Integer blogId);
+
+    /**
+     * mogu-search调用获取博客的接口[包含内容]
+     *
+     * @param currentPage
+     * @param pageSize
+     * @return
+     */
+    public IPage<Blog> getBlogBySearch(Long currentPage, Long pageSize);
+
 }
 

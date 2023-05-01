@@ -22,6 +22,9 @@
         <module>dd_web</module>
         <module>dd_api</module>
         <module>dd_service</module>
+        <module>dd_picture</module>
+        <module>dd_sms</module>
+        <module>dd_search</module>
     </modules>
 
     <properties>

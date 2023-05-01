@@ -21,5 +21,11 @@ public class AdminFeignFallbackClient implements AdminFeignClient {
         log.error("feign远程调用系统用户服务异常后的降级方法");
         return R.error("系统功能降级");
     }
+
+    @Override
+    public String getSystemConfig() {
+        log.error("feign远程调用系统用户服务异常后的降级方法");
+        return "系统功能降级";
+    }
 }
 

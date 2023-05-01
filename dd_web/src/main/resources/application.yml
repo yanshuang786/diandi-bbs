@@ -31,7 +31,11 @@ spring:
       resourceserver:
         jwt:
           jwk-set-uri: 'http://localhost:8500/rsa/publicKey' #配置RSA的公钥访问地址
-
+  rabbitmq:
+    host: 127.0.0.1 #rabbitmq的主机ip
+    port: 5672      # 注意5672才是RabbitMQ通信端口号！！ 15672是图形化界面的端口
+    username: guest
+    password: guest
   #redis
   redis:
     host: localhost #地址
@@ -46,3 +50,12 @@ spring:
         max-idle: 10 # 连接池中的最大空闲连接
         min-idle: 0 # 连接池中的最小空闲连接
         time-between-eviction-runs: -1 #逐出扫描的时间间隔(毫秒) 如果为负数,则不运行逐出线程, 默认-1
+
+wx:
+  appId: wxb7ca6048ec426f03
+  appSecret: d29708209e6e4707431bbd8cd314396e
+  server: http://au3sic.natappfree.cc
+  qrCodeUrl: https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=TOKEN
+  tokenUrl: https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=SECRET
+  openIdUrl: https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=SECRET
+  userInfoUrl: https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN

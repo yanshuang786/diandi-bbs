@@ -4,9 +4,13 @@ import com.yan.bbs.entity.vo.BlogVO;
 import com.yan.bbs.service.BlogService;
 import com.yan.dd_common.base.BaseController;
 import com.yan.dd_common.core.R;
+import com.yan.dd_common.entity.User;
+import com.yan.dd_common.utils.SecurityUtils;
+import com.yan.dd_common.validator.group.Insert;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -33,14 +37,15 @@ public class BlogController extends BaseController {
 
     @ApiOperation(value = "增加博客", notes = "增加博客")
     @PostMapping("/blog/add")
-    public R add(@RequestBody BlogVO blogVO, BindingResult result) {
+    public R add(@RequestBody BlogVO blogVO) {
         return blogService.addBlog(blogVO);
     }
 
     @ApiOperation(value = "更新博客")
     @RequestMapping("/blog/update")
     public R update(@RequestBody BlogVO blogVO) {
-        return blogService.updateBlog(blogVO,getLoginUser().getAdminId());
+        User loginUser = SecurityUtils.getLoginUser();
+        return blogService.updateBlog(blogVO,loginUser.getUserId());
     }
 
     @ApiOperation(value = "删除博客")

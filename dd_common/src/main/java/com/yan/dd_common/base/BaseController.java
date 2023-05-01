@@ -8,6 +8,7 @@ import com.yan.dd_common.core.page.PageDomain;
 import com.yan.dd_common.core.page.TableDataInfo;
 import com.yan.dd_common.core.page.TableSupport;
 import com.yan.dd_common.entity.Admin;
+import com.yan.dd_common.entity.User;
 import com.yan.dd_common.utils.DateUtils;
 import com.yan.dd_common.utils.SecurityUtils;
 import com.yan.dd_common.utils.SqlUtil;
@@ -154,6 +155,7 @@ public class BaseController {
     {
         return SecurityUtils.getLoginAdmin();
     }
+
 
     /**
      * 获取登录用户id

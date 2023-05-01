@@ -2,6 +2,7 @@ package com.yan.dd_common.utils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yan.dd_common.entity.Admin;
+import com.yan.dd_common.entity.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -51,5 +52,17 @@ public class SecurityUtils {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         return passwordEncoder.encode(password);
     }
+
+
+    public static User getLoginUser() {
+        ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = servletRequestAttributes.getRequest();
+
+        String user = request.getHeader("user");
+        Map map = JSONObject.parseObject(user, Map.class);
+        User loginUser = JSONObject.parseObject(String.valueOf(map.get("user")), User.class);
+        return loginUser;
+    }
+
 
 }

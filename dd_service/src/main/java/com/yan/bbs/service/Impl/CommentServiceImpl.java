@@ -18,7 +18,6 @@ import com.yan.dd_common.enums.ECommentSource;
 import com.yan.dd_common.enums.EStatus;
 import com.yan.dd_common.enums.StatusCode;
 import com.yan.dd_common.exception.DeleteException;
-import com.yan.dd_common.feign.PictureFeignClient;
 import com.yan.dd_common.model.Vo.CommentVO;
 import com.yan.dd_common.utils.ResultUtil;
 import com.yan.dd_common.utils.StringUtils;
@@ -35,7 +34,7 @@ import java.util.*;
 @Service
 public class CommentServiceImpl extends SuperServiceImpl<CommentMapper, Comment> implements CommentService {
 
-    @Resource
+    @Autowired
     private CommentMapper commentMapper;
     @Autowired
     private WebUtil webUtil;
@@ -45,8 +44,8 @@ public class CommentServiceImpl extends SuperServiceImpl<CommentMapper, Comment>
     private UserService userService;
     @Autowired
     private BlogService blogService;
-    @Resource
-    private PictureFeignClient pictureFeignClient;
+//    @Resource
+//    private PictureFeignClient pictureFeignClient;
 
     @Override
     public Integer getCommentCount(int status) {
@@ -135,7 +134,7 @@ public class CommentServiceImpl extends SuperServiceImpl<CommentMapper, Comment>
         });
         String pictureList = null;
         if (fileUids != null) {
-            pictureList = this.pictureFeignClient.getPicture(fileUids.toString(), SysConf.FILE_SEGMENTATION);
+            pictureList = "";
         }
         List<Map<String, Object>> picList = webUtil.getPictureMap(pictureList);
         Map<String, String> pictureMap = new HashMap<>();

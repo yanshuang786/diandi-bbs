@@ -1,15 +1,12 @@
 package com.yan.bbs.service.Impl;
 
+import com.yan.bbs.service.*;
 import com.yan.dd_common.entity.User;
 import com.yan.bbs.entity.UserLike;
 import com.yan.bbs.entity.vo.BlogVO;
 import com.yan.bbs.mapper.BlogMapper;
 import com.yan.bbs.mapper.BlogSortMapper;
 import com.yan.bbs.mapper.TagMapper;
-import com.yan.bbs.service.BlogLikeService;
-import com.yan.bbs.service.BlogService;
-import com.yan.bbs.service.SysConfigService;
-import com.yan.bbs.service.UserService;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -23,6 +20,7 @@ import com.yan.dd_common.entity.BlogSort;
 import com.yan.dd_common.entity.Tag;
 import com.yan.dd_common.enums.*;
 import com.yan.dd_common.redis.RedisUtil;
+import com.yan.dd_common.utils.SecurityUtils;
 import com.yan.dd_common.utils.StringUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
@@ -67,6 +65,9 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    SysParamsService sysParamsService;
 
     @Override
     public IPage<Blog> getNewBlog(Long currentPage, Long pageSize) {
@@ -344,7 +345,7 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
         // step02:
         Blog blog = new Blog();
         BeanUtils.copyProperties(blogVO, blog);
-        User user = userService.getById(request.getAttribute(SysConf.USER_UID).toString());
+        User user = SecurityUtils.getLoginUser();
         blog.setUserId(user.getUserId());
         // 如果是原创，作者为用户的昵称
         if (EOriginal.ORIGINAL.equals(blogVO.getIsOriginal())) {
@@ -842,7 +843,7 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
             map.put(SysConf.COMMAND, SysConf.ADD);
             map.put(SysConf.BLOG_ID, blog.getId());
             map.put(SysConf.LEVEL, blog.getLevel());
-            map.put(SysConf.CREATE_TIME, blog.getCreateTime());
+//            map.put(SysConf.CREATE_TIME, blog.getCreateTime().toString());
 
             //发送到RabbitMq
             rabbitTemplate.convertAndSend(SysConf.EXCHANGE_DIRECT, SysConf.DD_BLOG, map);
@@ -897,6 +898,32 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
             blog.setBlogSort(blogSort);
         }
         return blog;
+    }
+
+
+    @Override
+    public IPage<Blog> getBlogBySearch(Long currentPage, Long pageSize) {
+        QueryWrapper<Blog> queryWrapper = new QueryWrapper<>();
+        Page<Blog> page = new Page<>();
+        page.setCurrent(currentPage);
+        String blogNewCount = sysParamsService.getSysParamsValueByKey(SysConf.BLOG_NEW_COUNT);
+        if (StringUtils.isEmpty(blogNewCount)) {
+            log.error(MessageConf.PLEASE_CONFIGURE_SYSTEM_PARAMS);
+        } else {
+            page.setSize(Long.valueOf(blogNewCount));
+        }
+        queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
+        queryWrapper.eq(BaseSQLConf.IS_PUBLISH, EPublish.PUBLISH);
+        queryWrapper.eq(BaseSQLConf.IS_AUDIT, "1");
+        queryWrapper.orderByDesc(SQLConf.CREATE_TIME);
+        IPage<Blog> pageList = dao.selectPage(page, queryWrapper);
+        List<Blog> list = pageList.getRecords();
+        if (list.size() <= 0) {
+            return pageList;
+        }
+        list = setBlog(list);
+        pageList.setRecords(list);
+        return pageList;
     }
 }
 

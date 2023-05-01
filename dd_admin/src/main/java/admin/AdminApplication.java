@@ -16,7 +16,10 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableFeignClients("com.yan.dd_common.feign")
 @ComponentScan(basePackages = {"com.yan.bbs.mapper",
         "com.yan.bbs.service",
-        "com.yan.bbs.service.Impl","com.yan.dd_common.redis","admin.controller.*"})
+        "com.yan.bbs.service.Impl",
+        "com.yan.dd_common.redis",
+        "admin.controller.*"
+})
 @MapperScan(value = "com.yan.bbs.mapper")
 public class AdminApplication {
     public static void main(String[] args) {

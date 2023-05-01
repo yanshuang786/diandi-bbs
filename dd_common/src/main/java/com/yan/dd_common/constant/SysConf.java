@@ -4,7 +4,7 @@ package com.yan.dd_common.constant;
  * @author yanshuang
  * @date 2023/4/27 17:55
  */
-public class SysConf {
+public class SysConf extends BaseSQLConf{
 
     public final static String ALL = "all";
     public final static String DEFAULT_UID = "uid00000000000000000000000000000";

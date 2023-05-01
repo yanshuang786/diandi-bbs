@@ -14,7 +14,7 @@ import java.util.Map;
  */
 @Data
 @TableName("d_blog")
-public class Blog  {
+public class Blog {
 
     private static final long serialVersionUID = 1L;
 
