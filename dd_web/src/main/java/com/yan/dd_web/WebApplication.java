@@ -24,6 +24,7 @@ import org.springframework.context.annotation.ComponentScan;
         "com.yan.dd_web.controller",
         "com.yan.dd_web.wxController",
         "com.yan.dd_web.config",
+        "com.yan.dd_common.config",
         "com.yan.dd_common.feign.fallback"
 })
 @EnableFeignClients("com.yan.dd_common.feign.*")

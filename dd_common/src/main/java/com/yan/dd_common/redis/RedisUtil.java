@@ -19,7 +19,11 @@ import java.util.concurrent.TimeUnit;
 public class RedisUtil {
 
     @Autowired
-    private StringRedisTemplate redisTemplate;
+    private RedisTemplate redisTemplate;
+
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     /**
      * 列表获取数量
@@ -45,7 +49,7 @@ public class RedisUtil {
     }
 
     public void setCacheMap(String key, String hashKey, Object value) {
-        HashOperations<String, Object, Object> hash = redisTemplate.opsForHash();
+        HashOperations<String, String, Object> hash = redisTemplate.opsForHash();
         hash.put(key, hashKey, value);
     }
 
@@ -281,7 +285,7 @@ public class RedisUtil {
      * @return
      */
     public String randomKey() {
-        return redisTemplate.randomKey();
+        return stringRedisTemplate.randomKey();
     }
 
     /**
@@ -334,7 +338,7 @@ public class RedisUtil {
      * @return
      */
     public String get(String key) {
-        return redisTemplate.opsForValue().get(key);
+        return stringRedisTemplate.opsForValue().get(key);
     }
 
     /**
@@ -357,7 +361,7 @@ public class RedisUtil {
      * @return
      */
     public String getAndSet(String key, String value) {
-        return redisTemplate.opsForValue().getAndSet(key, value);
+        return stringRedisTemplate.opsForValue().getAndSet(key, value);
     }
 
     /**
@@ -640,7 +644,7 @@ public class RedisUtil {
      * @return
      */
     public String lIndex(String key, long index) {
-        return redisTemplate.opsForList().index(key, index);
+        return stringRedisTemplate.opsForList().index(key, index);
     }
 
     /**
@@ -775,7 +779,7 @@ public class RedisUtil {
      * @return 删除的元素
      */
     public String lLeftPop(String key) {
-        return redisTemplate.opsForList().leftPop(key);
+        return stringRedisTemplate.opsForList().leftPop(key);
     }
 
     /**
@@ -787,7 +791,7 @@ public class RedisUtil {
      * @return
      */
     public String lBLeftPop(String key, long timeout, TimeUnit unit) {
-        return redisTemplate.opsForList().leftPop(key, timeout, unit);
+        return stringRedisTemplate.opsForList().leftPop(key, timeout, unit);
     }
 
     /**
@@ -797,7 +801,7 @@ public class RedisUtil {
      * @return 删除的元素
      */
     public String lRightPop(String key) {
-        return redisTemplate.opsForList().rightPop(key);
+        return stringRedisTemplate.opsForList().rightPop(key);
     }
 
     /**
@@ -809,7 +813,7 @@ public class RedisUtil {
      * @return
      */
     public String lBRightPop(String key, long timeout, TimeUnit unit) {
-        return redisTemplate.opsForList().rightPop(key, timeout, unit);
+        return stringRedisTemplate.opsForList().rightPop(key, timeout, unit);
     }
 
     /**
@@ -820,7 +824,7 @@ public class RedisUtil {
      * @return
      */
     public String lRightPopAndLeftPush(String sourceKey, String destinationKey) {
-        return redisTemplate.opsForList().rightPopAndLeftPush(sourceKey,
+        return stringRedisTemplate.opsForList().rightPopAndLeftPush(sourceKey,
                 destinationKey);
     }
 
@@ -835,7 +839,7 @@ public class RedisUtil {
      */
     public String lBRightPopAndLeftPush(String sourceKey, String destinationKey,
                                         long timeout, TimeUnit unit) {
-        return redisTemplate.opsForList().rightPopAndLeftPush(sourceKey,
+        return stringRedisTemplate.opsForList().rightPopAndLeftPush(sourceKey,
                 destinationKey, timeout, unit);
     }
 
@@ -904,7 +908,7 @@ public class RedisUtil {
      * @return
      */
     public String sPop(String key) {
-        return redisTemplate.opsForSet().pop(key);
+        return stringRedisTemplate.opsForSet().pop(key);
     }
 
     /**
@@ -1102,7 +1106,7 @@ public class RedisUtil {
      * @return
      */
     public String sRandomMember(String key) {
-        return redisTemplate.opsForSet().randomMember(key);
+        return stringRedisTemplate.opsForSet().randomMember(key);
     }
 
     /**
@@ -1470,7 +1474,7 @@ public class RedisUtil {
      * @return
      */
     public <T> List<T> getListCache(final String key, Class<T> targetClass) {
-        byte[] result = redisTemplate.execute(new RedisCallback<byte[]>() {
+        byte[] result = stringRedisTemplate.execute(new RedisCallback<byte[]>() {
             @Override
             public byte[] doInRedis(RedisConnection connection) throws DataAccessException {
                 return connection.get(key.getBytes());
@@ -1493,7 +1497,7 @@ public class RedisUtil {
     public <T> boolean putListCacheWithExpireTime(String key, List<T> objList, final long expireTime) {
         final byte[] bkey = key.getBytes();
         final byte[] bvalue = ProtoStuffSerializerUtil.serializeList(objList);
-        boolean result = redisTemplate.execute(new RedisCallback<Boolean>() {
+        boolean result = stringRedisTemplate.execute(new RedisCallback<Boolean>() {
             @Override
             public Boolean doInRedis(RedisConnection connection) throws DataAccessException {
                 connection.setEx(bkey, expireTime, bvalue);
