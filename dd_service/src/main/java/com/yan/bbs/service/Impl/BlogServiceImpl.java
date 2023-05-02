@@ -160,9 +160,7 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
     private void getIndexBlogLikeCount(List<Blog> list) {
         try {
             // todo
-//            HttpServletRequest request = RequestHolder.getRequest();
-//            LoginUser loginUser = (LoginUser) request.getAttribute("user");
-            User user = new User();
+            User user = SecurityUtils.getLoginUser();
             // 当前用户点赞的文章
             List<UserLike> userLikeBlog = blogLikeService.getUserLikeBlog(user.getUserId());
             list.stream().map(m -> {

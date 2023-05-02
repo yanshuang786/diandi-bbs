@@ -1,0 +1,41 @@
+server:
+  port: 8605
+
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: dd-search
+  cloud:
+    nacos:
+      username: nacos
+      password: nacos
+      discovery:
+        server-addr: 127.0.0.1:8848
+#        namespace: dev
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yaml
+        #指定分组
+        group: dev
+        #指定命名空间
+        namespace: dev
+  # DATABASE CONFIG
+  datasource:
+    username: root
+    password: rootroot
+    url: jdbc:mysql://localhost:3306/diandi_bbs?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&useSSL=false&serverTimezone=Asia/Shanghai
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+  #redis
+  redis:
+    host: 127.0.0.1 #redis的主机ip
+    port: 6379
+    #password: mogu2018  # 客户端没有设置密码，服务器中redis默认密码为 mogu2018
+  data:
+    elasticsearch:
+      rest:
+        uris: 127.0.0.1:9300
+      repositories:
+        enabled: true

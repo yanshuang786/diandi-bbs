@@ -1,0 +1,30 @@
+server:
+  port: 8602
+
+spring:
+  main:
+    allow-bean-definition-overriding: true  # 后来发现的bean会覆盖之前相同名称的bean
+
+  application:
+    name: dd-dist
+  # DATABASE CONFIG
+  datasource:
+    username: root
+    password: rootroot
+    url: jdbc:mysql://localhost:3306/mogu_picture?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&useSSL=false&serverTimezone=GMT%2B8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+  cloud:
+    nacos:
+      username: nacos
+      password: nacos
+      discovery:
+        server-addr: 127.0.0.1:8848
+  rabbitmq:
+    host: 101.200.89.170 #rabbitmq的主机ip
+    port: 5672      # 注意5672才是RabbitMQ通信端口号！！ 15672是图形化界面的端口
+    username: admin
+    password: mogu2018
+file:
+  upload:
+    path: /Users/yanshuang/Desktop/crmeb_java
