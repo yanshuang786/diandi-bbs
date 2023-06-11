@@ -18,6 +18,7 @@ import org.springframework.context.annotation.ComponentScan;
         "com.yan.bbs.service",
         "com.yan.bbs.service.Impl",
         "com.yan.dd_common.redis",
+        "com.yan.dd_common.config",
         "admin.controller.*"
 })
 @MapperScan(value = "com.yan.bbs.mapper")

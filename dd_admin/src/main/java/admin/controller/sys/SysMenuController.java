@@ -28,7 +28,6 @@ public class SysMenuController  {
     /**
      * 获取菜单列表
      */
-//    @PreAuthorize("@ss.hasPermi('system:menu:list')")
     @GetMapping("/list")
     public R list(SysMenu menu) {
         List<SysMenu> menus = menuService.selectMenuList(menu, SecurityUtils.getLoginAdminId());
@@ -38,7 +37,6 @@ public class SysMenuController  {
     /**
      * 根据菜单编号获取详细信息
      */
-//    @PreAuthorize("@ss.hasPermi('system:menu:query')")
     @GetMapping(value = "/{menuId}")
     public R getInfo(@PathVariable Long menuId) {
         return R.success(menuService.selectMenuById(menuId));

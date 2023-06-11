@@ -12,6 +12,7 @@ public class BaseSQLConf {
     public final static String CREATE_TIME = "create_time";
     public final static String UPDATE_TIME = "update_time";
     public final static String STATUS = "status";
+    public final static String IS_SHOW = "is_show";
     public final static String DEL_FLAG = "del_flag";
     public final static String PROJECT_NAME = "project_name";
     public final static String IS_PUBLISH = "is_publish";

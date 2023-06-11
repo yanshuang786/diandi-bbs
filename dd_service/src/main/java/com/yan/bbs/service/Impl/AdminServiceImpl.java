@@ -42,20 +42,19 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
     private AdminService adminService;
 
     /**
-     * &#x6839;&#x636E;&#x6761;&#x4EF6;&#x5206;&#x9875;&#x67E5;&#x8BE2;&#x7BA1;&#x7406;&#x5458;&#x5217;&#x8868;
      *
-     * @param admin &#x7BA1;&#x7406;&#x5458;&#x4FE1;&#x606F;
-     * @return &#x7BA1;&#x7406;&#x5458;&#x4FE1;&#x606F;&#x96C6;&#x5408;&#x4FE1;&#x606F;
+     * @param admin
+     * @return
      */
     @Override
     public List<Admin> selectAdminList(Admin admin) {
 
         LambdaQueryWrapper<Admin> queryWrapper = new LambdaQueryWrapper<>();
         if(StringUtils.isNotNull(admin.getAdminName())){
-            queryWrapper.eq(Admin::getAdminName,admin.getAdminName());
+            queryWrapper.like(Admin::getAdminName,admin.getAdminName());
         }
         if(StringUtils.isNotNull(admin.getPhoneNumber())){
-            queryWrapper.eq(Admin::getPhoneNumber,admin.getPhoneNumber());
+            queryWrapper.like(Admin::getPhoneNumber,admin.getPhoneNumber());
         }
         if(StringUtils.isNotNull(admin.getStatus())){
             queryWrapper.eq(Admin::getStatus,admin.getStatus());

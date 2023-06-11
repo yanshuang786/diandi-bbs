@@ -11,9 +11,12 @@ import com.yan.dd_common.global.Constants;
 import com.yan.dd_common.redis.RedisUtil;
 import com.yan.dd_common.utils.JsonUtils;
 import com.yan.sms.config.RabbitMqConfig;
+import com.yan.sms.pojo.ESBlogIndex;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
@@ -36,10 +39,10 @@ public class BlogListener {
     public RedisUtil redisUtil;
 
     @Autowired
-    private SearchFeignClient searchFeignClient;
+    public SysConfigService sysConfigService;
 
     @Autowired
-    public SysConfigService sysConfigService;
+    public ElasticsearchOperations elasticsearchOperations;
 
     @Autowired
     public BlogMapper blogMapper;
@@ -52,6 +55,10 @@ public class BlogListener {
     @RabbitListener(queues = RabbitMqConfig.DD_BLOG)
     public void update(HashMap<String, String> map) {
         log.info("更新Redis和ES");
+
+        //从Redis清空对应的数据
+        redisUtil.delete(RedisConf.HOT_BLOG);
+        redisUtil.delete(RedisConf.NEW_BLOG);
 
         if(map != null) {
             // 当前是删除，添加，修改，
@@ -66,44 +73,33 @@ public class BlogListener {
             String searchModel = sysConfigService.selectConfigByKey("sys_search_mode");
             try {
                 switch (comment) {
-                    case SysConf.DELETE_BATCH: {
-                        // TODO
-                        log.info("处理批量删除博客");
-                        redisUtil.set(RedisConf.BLOG_SORT_BY_MONTH + Constants.SYMBOL_COLON, "");
-                        redisUtil.set(RedisConf.MONTH_SET, "");
-                    }
-                    break;
-
-                    case SysConf.EDIT_BATCH: {
-                        // TODO
-                        log.info("处理批量编辑博客");
-                        redisUtil.set(RedisConf.BLOG_SORT_BY_MONTH + Constants.SYMBOL_COLON, "");
-                        redisUtil.set(RedisConf.MONTH_SET, "");
-                    }
-                    break;
 
                     case SysConf.ADD: {
                         log.info("增加博客");
-                        // 新增Redis
-                        Blog blog = blogMapper.selectById(Integer.valueOf(id));
-                        redisUtil.lLeftPush(RedisConf.NEW_BLOG, JSONObject.toJSONString(blog));
                         // 新增ES
-
+                        Blog blog = blogMapper.selectById(Integer.valueOf(id));
+                        ESBlogIndex esBlogIndex = new ESBlogIndex();
+                        BeanUtils.copyProperties(blog, esBlogIndex);
+                        elasticsearchOperations.save(esBlogIndex);
                     }
                     break;
 
                     case SysConf.UPDATE: {
                         log.info("更新博客");
-                        // 新增Redis
                         Blog blog = blogMapper.selectById(Integer.valueOf(id));
-                        redisUtil.lLeftPush(RedisConf.NEW_BLOG, JSONObject.toJSONString(blog));
-
+                        ESBlogIndex esBlogIndex = new ESBlogIndex();
+                        esBlogIndex.setId(blog.getId());
+                        elasticsearchOperations.delete(esBlogIndex);
+                        BeanUtils.copyProperties(blog, esBlogIndex);
+                        elasticsearchOperations.save(esBlogIndex);
                     }
                     break;
 
                     case SysConf.DELETE: {
                         log.info("删除博客: id:" + id);
-
+                        ESBlogIndex esBlogIndex = new ESBlogIndex();
+                        esBlogIndex.setId(Integer.valueOf(id));
+                        elasticsearchOperations.delete(esBlogIndex);
                     }
                     break;
                     default: {
@@ -129,7 +125,7 @@ public class BlogListener {
             String month = list[1];
             String key = year + "年" + month + "月";
             redisUtil.delete(RedisConf.BLOG_SORT_BY_MONTH + Constants.SYMBOL_COLON + key);
-            String jsonResult = redisUtil.get(RedisConf.MONTH_SET);
+            String jsonResult = (String) redisUtil.get(RedisConf.MONTH_SET);
             ArrayList<String> monthSet = (ArrayList<String>) JsonUtils.jsonArrayToArrayList(jsonResult);
             Boolean haveMonth = false;
             if (monthSet != null) {

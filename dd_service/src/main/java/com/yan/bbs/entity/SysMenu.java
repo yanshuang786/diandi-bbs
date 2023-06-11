@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 菜单表
+ *
  * @author yanshuang
  * @date 2023/4/25 16:58
  */

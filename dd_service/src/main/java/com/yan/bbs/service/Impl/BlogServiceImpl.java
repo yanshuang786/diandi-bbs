@@ -73,7 +73,6 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
     public IPage<Blog> getNewBlog(Long currentPage, Long pageSize) {
         IPage<Blog> pageList = new Page<>(currentPage,pageSize);
 
-
         // 1.获取'NEW_BLOG'文章个数
         Long size = 0L;
         try {
@@ -104,7 +103,7 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
         lambdaQueryWrapper.eq(Blog::getStatus, EStatus.ENABLE);
         lambdaQueryWrapper.eq(Blog::getIsPublish, EPublish.PUBLISH);
         lambdaQueryWrapper.eq(Blog::getIsAudit, StatusCode.ENABLE);
-        lambdaQueryWrapper.orderByDesc(Blog::getCreateTime);
+//        lambdaQueryWrapper.orderByDesc(Blog::getCreateTime);
         //因为首页并不需要显示内容，所以需要排除掉内容字段
         lambdaQueryWrapper.select(Blog.class, i -> !i.getProperty().equals(SQLConf.CONTENT));
         pageList = dao.selectPage(page, lambdaQueryWrapper);
@@ -143,7 +142,8 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
             // 点赞数量
             HashSet<Integer> userIdSet = new HashSet<>();
             try {
-                userIdSet = JSONObject.parseObject(redisUtil.getCacheMap(Constants.USER_LIKE_BLOG_KEY, String.valueOf(item.getId())).toString(),HashSet.class);
+                userIdSet = JSONObject.parseObject(redisUtil.getCacheMap(Constants.USER_LIKE_BLOG_KEY,
+                        String.valueOf(item.getId())).toString(),HashSet.class);
             } catch (Exception e) {}
 
             item.setLikeCount(item.getLikeCount()+userIdSet.size());
@@ -188,7 +188,6 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
 
 
     private List<Blog> setIndexBlog(List<Blog> list) {
-        final StringBuffer fileUids = new StringBuffer();
         for (Blog item : list) {
             // 设置用户头像
             if (StringUtils.isNotEmpty(userService.getUserById(item.getUserId()).getAvatar())) {
@@ -196,7 +195,8 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
             }
             HashSet<Integer> userIdSet = new HashSet<>();
             try {
-                userIdSet = JSONObject.parseObject(redisUtil.getCacheMap(Constants.USER_LIKE_BLOG_KEY, String.valueOf(item.getId())).toString(),HashSet.class);
+                userIdSet = JSONObject.parseObject(redisUtil.getCacheMap(Constants.USER_LIKE_BLOG_KEY,
+                        String.valueOf(item.getId())).toString(),HashSet.class);
             } catch (Exception e) {}
 
             item.setLikeCount(item.getLikeCount()+userIdSet.size());
@@ -283,10 +283,9 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
     @Override
     public R getBlogById(Integer id) {
         Blog blog = null;
-//        if (StringUtils.isNull(id)) {
-//           return R.success(blog);
-//        }
-        if (StringUtils.isNotNull(id)) {
+        if (StringUtils.isNull(id)) {
+           return R.success(null);
+        } else if (StringUtils.isNotNull(id)) {
             blog = dao.selectById(id);
         } else {
             QueryWrapper<Blog> queryWrapper = new QueryWrapper<>();
@@ -802,7 +801,7 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
         Blog blog = dao.selectOne(queryWrapper);
         redisUtil.lRemove(RedisConf.NEW_BLOG, 0, JSONObject.toJSONString(blog));
         blog.setTitle(blogVO.getTitle());
-        blog.setContent(blog.getContent());
+        blog.setContent(blogVO.getContent());
         if(blogVO.getFileId() != null) {
             blog.setPhotoUrl(blogVO.getFileId());
         }
@@ -841,7 +840,7 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
             map.put(SysConf.COMMAND, SysConf.ADD);
             map.put(SysConf.BLOG_ID, blog.getId());
             map.put(SysConf.LEVEL, blog.getLevel());
-//            map.put(SysConf.CREATE_TIME, blog.getCreateTime().toString());
+            map.put(SysConf.CREATE_TIME, blog.getCreateTime());
 
             //发送到RabbitMq
             rabbitTemplate.convertAndSend(SysConf.EXCHANGE_DIRECT, SysConf.DD_BLOG, map);

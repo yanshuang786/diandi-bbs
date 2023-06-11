@@ -1,13 +1,11 @@
 package com.yan.dd_web.controller;
 
+import com.yan.bbs.service.EventService;
 import com.yan.dd_common.core.R;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.yan.dd_common.utils.SecurityUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 通知
@@ -20,16 +18,20 @@ import java.util.Map;
 public class EventController {
 
 
+    private final EventService eventService;
+
+    public EventController(EventService eventService) {
+        this.eventService = eventService;
+    }
+
+    @GetMapping("/getNewNoticeList")
+    public R getNewNoticeList() {
+        return R.success(eventService.getNewNoticeList(SecurityUtils.getLoginUser().getUserId()));
+    }
+
     @GetMapping("/getCount")
     public R getCount() {
-
-        Map<String, Integer> map = new HashMap<>();
-
-        Integer like = 0;
-        Integer comments = 0;
-        map.put("like", like);
-        map.put("comments", comments);
-        return R.success(map);
+        return eventService.getNoticeCount(SecurityUtils.getLoginUser().getUserId());
     }
 
 }

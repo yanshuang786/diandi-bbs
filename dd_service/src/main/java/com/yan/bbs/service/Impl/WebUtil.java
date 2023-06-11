@@ -50,7 +50,7 @@ public class WebUtil {
         String qiNiuPictureBaseUrl = "";
         String minioPictureBaseUrl = "";
         // 从Redis中获取系统配置
-        String systemConfigJson = redisUtil.get(RedisConf.SYSTEM_CONFIG);
+        String systemConfigJson = (String) redisUtil.get(RedisConf.SYSTEM_CONFIG);
         if (org.springframework.util.StringUtils.isEmpty(systemConfigJson)) {
             QueryWrapper<SystemConfig> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
@@ -115,7 +115,7 @@ public class WebUtil {
         String qiNiuPictureBaseUrl = "";
         String minioPictureBaseUrl = "";
         // 从Redis中获取系统配置
-        String systemConfigJson = redisUtil.get(RedisConf.SYSTEM_CONFIG);
+        String systemConfigJson = (String) redisUtil.get(RedisConf.SYSTEM_CONFIG);
         if (org.springframework.util.StringUtils.isEmpty(systemConfigJson)) {
             QueryWrapper<SystemConfig> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);

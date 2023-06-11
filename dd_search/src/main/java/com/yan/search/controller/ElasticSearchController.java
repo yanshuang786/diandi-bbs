@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.WebUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -148,7 +149,7 @@ public class ElasticSearchController {
 
         String result = webFeignClient.getBlogByUid(uid);
 
-        Blog eblog = new Blog();
+        Blog eblog = getData(result, Blog.class);
         if (eblog == null) {
             return ResultUtil.result(SysConf.ERROR, MessageConf.INSERT_FAIL);
         }
@@ -156,4 +157,16 @@ public class ElasticSearchController {
         blogRepository.save(blog);
         return ResultUtil.result(SysConf.SUCCESS, MessageConf.INSERT_SUCCESS);
     }
+
+    public static <T> T getData(String result, Class<T> beanType) {
+
+        Map<String, Object> dataMap = (Map<String, Object>) JsonUtils.jsonToObject(result, Map.class);
+        if ("success".equals(dataMap.get("code"))) {
+            Map<String, Object> data = (Map<String, Object>) dataMap.get("data");
+            T t = JsonUtils.mapToPojo(data, beanType);
+            return t;
+        }
+        return null;
+    }
+
 }

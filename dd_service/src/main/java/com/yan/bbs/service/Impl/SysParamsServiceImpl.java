@@ -51,7 +51,7 @@ public class SysParamsServiceImpl extends SuperServiceImpl<SysParamsMapper, SysP
     public String getSysParamsValueByKey(String paramsKey) {
         // 判断Redis中是否包含该key的数据
         String redisKey = RedisConf.SYSTEM_PARAMS + RedisConf.SEGMENTATION + paramsKey;
-        String paramsValue = redisUtil.get(redisKey);
+        String paramsValue = (String) redisUtil.get(redisKey);
         // 如果Redis中不存在，那么从数据库中获取
         if (StringUtils.isEmpty(paramsValue)) {
             SysParams sysParams = sysParamsService.getSysParamsByKey(paramsKey);

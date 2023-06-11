@@ -4,21 +4,19 @@ import com.yan.bbs.entity.vo.BlogVO;
 import com.yan.bbs.service.BlogService;
 import com.yan.dd_common.base.BaseController;
 import com.yan.dd_common.core.R;
-import com.yan.dd_common.entity.User;
-import com.yan.dd_common.utils.SecurityUtils;
-import com.yan.dd_common.validator.group.Insert;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
+ *
+ * 文章相关API
+ *
  * @author yanshuang
  * @date 2022/4/27 8:27 下午
  */
 @RestController
-@Api(value = "博客相关接口", tags = {"博客相关接口"})
+@Api(value = "文章相关API接口", tags = {"文章相关API接口"})
 public class BlogController extends BaseController {
 
 
@@ -34,7 +32,6 @@ public class BlogController extends BaseController {
         return blogService.getBlogById(id);
     }
 
-
     @ApiOperation(value = "增加博客", notes = "增加博客")
     @PostMapping("/blog/add")
     public R add(@RequestBody BlogVO blogVO) {
@@ -44,13 +41,12 @@ public class BlogController extends BaseController {
     @ApiOperation(value = "更新博客")
     @RequestMapping("/blog/update")
     public R update(@RequestBody BlogVO blogVO) {
-        User loginUser = SecurityUtils.getLoginUser();
-        return blogService.updateBlog(blogVO,loginUser.getUserId());
+        return blogService.updateBlog(blogVO,getLoginUser().getUserId());
     }
 
     @ApiOperation(value = "删除博客")
     @RequestMapping("/blog/delete")
-    public R update(Integer id) {
+    public R update(@RequestParam(name = "id", required = false) Integer id) {
         return blogService.deleteById(id);
     }
 }

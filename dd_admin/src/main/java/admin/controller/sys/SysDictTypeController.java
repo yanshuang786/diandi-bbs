@@ -4,22 +4,22 @@ import com.yan.bbs.entity.SysDictType;
 import com.yan.bbs.service.ISysDictTypeService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.yan.dd_common.base.BaseController;
+import com.yan.dd_common.constant.UserConstants;
 import com.yan.dd_common.core.R;
 import com.yan.dd_common.core.page.TableDataInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 /**
+ * 字典数据相关接口
+ *
  * @author yanshuang
  * @date 2023/4/27 16:20
  */
 @RestController
 @RequestMapping("/system/dict/type")
-//@Api(value = "字典数据相关接口", tags = {"字典数据相关接口"})
 @Slf4j
 public class SysDictTypeController extends BaseController {
 
@@ -40,11 +40,25 @@ public class SysDictTypeController extends BaseController {
     /**
      * 查询字典类型详细
      */
-//    @PreAuthorize("@ss.hasPermi('system:dict:query')")
     @GetMapping(value = "/{dictId}")
     public R getInfo(@PathVariable Long dictId)
     {
         return R.success(dictTypeService.getDictTypeById(dictId));
+    }
+
+
+    /**
+     * 新增字典类型
+     */
+    @PostMapping
+    public R add(@Validated @RequestBody SysDictType dict)
+    {
+        if (dictTypeService.checkDictTypeUnique(dict) == UserConstants.NOT_UNIQUE){
+            return error("新增字典'" + dict.getDictName() + "'失败，字典类型已存在");
+        }
+        dict.setCreateBy(getUsername());
+        dict.setUpdateBy(getUsername());
+        return toAjax(dictTypeService.insertDictType(dict));
     }
 }
 

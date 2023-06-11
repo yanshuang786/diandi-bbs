@@ -8,6 +8,7 @@ import com.yan.bbs.service.ISysDictTypeService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.yan.dd_common.constant.UserConstants;
 import com.yan.dd_common.core.page.PageDomain;
 import com.yan.dd_common.core.page.TableSupport;
 import com.yan.dd_common.enums.StatusCode;
@@ -44,9 +45,9 @@ public class ISysDictTypeServiceImpl extends SuperServiceImpl<ISysDictTypeMapper
         }
         LambdaQueryWrapper<SysDictType> queryWrapper = new LambdaQueryWrapper<SysDictType>();
         queryWrapper.eq(SysDictType::getStatus, StatusCode.ENABLE);
-//        if(StringUtils.isNotNull(dictType.getDictName())){
-//            queryWrapper.like(SysDictType::getDictName,dictType.getDictName());
-//        }
+        if(StringUtils.isNotNull(dictType.getDictName())){
+            queryWrapper.like(SysDictType::getDictName,dictType.getDictName());
+        }
         if(StringUtils.isNotNull(dictType.getDictType())){
             queryWrapper.like(SysDictType::getDictType,dictType.getDictType());
         }
@@ -98,6 +99,42 @@ public class ISysDictTypeServiceImpl extends SuperServiceImpl<ISysDictTypeMapper
     @Override
     public boolean updateDictData(SysDictData dictData) {
         return dictData.updateById();
+    }
+
+
+    /**
+     * 新增保存字典类型信息
+     *
+     * @param dict 字典类型信息
+     * @return 结果
+     */
+    @Override
+    public int insertDictType(SysDictType dict)
+    {
+        return this.baseMapper.insert(dict);
+    }
+
+
+    /**
+     * 校验字典类型称是否唯一
+     *
+     * @param dict 字典类型
+     * @return 结果
+     */
+    @Override
+    public String checkDictTypeUnique(SysDictType dict)
+    {
+        Long dictId = StringUtils.isNull(dict.getId()) ? -1L : dict.getId();
+        LambdaQueryWrapper<SysDictType> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(SysDictType::getDictType, dict.getDictType());
+        List<SysDictType> sysDictTypes = this.baseMapper.selectList(queryWrapper);
+        if(sysDictTypes.size() == 0) {
+            return UserConstants.UNIQUE;
+        } else if(sysDictTypes.size() == 1 && sysDictTypes.get(1).getId().longValue() == dictId.longValue()){
+            return UserConstants.UNIQUE;
+        } else {
+            return UserConstants.NOT_UNIQUE;
+        }
     }
 
 }

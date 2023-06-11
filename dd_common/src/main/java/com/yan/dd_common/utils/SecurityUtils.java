@@ -8,7 +8,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -27,12 +26,12 @@ public class SecurityUtils {
 
     public static Admin getLoginAdmin() {
         ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = servletRequestAttributes.getRequest();
-
-        String user = request.getHeader("user");
-        Map map = JSONObject.parseObject(user, Map.class);
-        Admin admin = JSONObject.parseObject(String.valueOf(map.get("admin")), Admin.class);
-        return admin;
+        if(servletRequestAttributes != null) {
+            HttpServletRequest request = servletRequestAttributes.getRequest();
+            String user = request.getHeader("user");
+            return JSONObject.parseObject(String.valueOf(JSONObject.parseObject(user, Map.class).get("admin")), Admin.class);
+        }
+        return null;
     }
 
     public static boolean isAdmin(Long userId)
@@ -56,12 +55,12 @@ public class SecurityUtils {
 
     public static User getLoginUser() {
         ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = servletRequestAttributes.getRequest();
-
-        String user = request.getHeader("user");
-        Map map = JSONObject.parseObject(user, Map.class);
-        User loginUser = JSONObject.parseObject(String.valueOf(map.get("user")), User.class);
-        return loginUser;
+        if(servletRequestAttributes != null) {
+            HttpServletRequest request = servletRequestAttributes.getRequest();
+            String user = request.getHeader("user");
+            return JSONObject.parseObject(String.valueOf(JSONObject.parseObject(user, Map.class).get("user")), User.class);
+        }
+        return null;
     }
 
 

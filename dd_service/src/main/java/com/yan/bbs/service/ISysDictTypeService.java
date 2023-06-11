@@ -26,4 +26,22 @@ public interface ISysDictTypeService extends SuperService<SysDictType> {
      * @return 结果
      */
     public boolean updateDictData(SysDictData dictData);
+
+
+    /**
+     * 校验字典类型称是否唯一
+     *
+     * @param dictType 字典类型
+     * @return 结果
+     */
+    public String checkDictTypeUnique(SysDictType dictType);
+
+
+    /**
+     * 新增保存字典类型信息
+     *
+     * @param dictType 字典类型信息
+     * @return 结果
+     */
+    public int insertDictType(SysDictType dictType);
 }

@@ -27,7 +27,6 @@ import java.util.List;
  * @date 2023/4/27 16:06
  */
 public class BaseController {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * 将前台传递过来的日期格式的字符串，自动转化为Date类型
@@ -57,19 +56,6 @@ public class BaseController {
             String orderBy = SqlUtil.escapeOrderBySql(pageDomain.getOrderBy());
             Boolean reasonable = pageDomain.getReasonable();
             PageHelper.startPage(pageNum, pageSize, orderBy).setReasonable(reasonable);
-        }
-    }
-
-    /**
-     * 设置请求排序数据
-     */
-    protected void startOrderBy()
-    {
-        PageDomain pageDomain = TableSupport.buildPageRequest();
-        if (StringUtils.isNotEmpty(pageDomain.getOrderBy()))
-        {
-            String orderBy = SqlUtil.escapeOrderBySql(pageDomain.getOrderBy());
-            PageHelper.orderBy(orderBy);
         }
     }
 
@@ -140,20 +126,13 @@ public class BaseController {
         return result ? success() : error();
     }
 
-    /**
-     * 页面跳转
-     */
-    public String redirect(String url)
-    {
-        return StringUtils.format("redirect:{}", url);
-    }
 
     /**
      * 获取用户缓存信息
      */
-    public Admin getLoginUser()
+    public User getLoginUser()
     {
-        return SecurityUtils.getLoginAdmin();
+        return SecurityUtils.getLoginUser();
     }
 
 
@@ -165,15 +144,12 @@ public class BaseController {
         return SecurityUtils.getLoginAdminId();
     }
 
-    /**
-     * 获取登录部门id
-     */
 
     /**
      * 获取登录用户名
      */
     public String getUsername()
     {
-        return SecurityUtils.getUsername();
+        return SecurityUtils.getLoginAdmin().getAdminName();
     }
 }

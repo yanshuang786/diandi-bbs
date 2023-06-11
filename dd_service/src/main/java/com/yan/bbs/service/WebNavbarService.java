@@ -14,11 +14,19 @@ public interface WebNavbarService extends SuperService<WebNavbar> {
 
 
     /**
-     * 获取所有门户导航栏
+     * 获取门户导航栏
      *
      * @return
      */
     public List<WebNavbar> getAllList();
+
+
+    /**
+     * 获取所有门户导航栏
+     *
+     * @return
+     */
+    public List<WebNavbar> getWebAllList(String isShow);
 
     /**
      * 增加导航栏

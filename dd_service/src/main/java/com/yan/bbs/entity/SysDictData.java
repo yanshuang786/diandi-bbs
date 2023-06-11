@@ -13,7 +13,7 @@ import lombok.Data;
 public class SysDictData extends SuperBaseEntity<SysDictData> {
 
     /**
-     * 自增键 id
+     * 自增键 idp
      */
     @TableId(type = IdType.AUTO)
     private Long id;

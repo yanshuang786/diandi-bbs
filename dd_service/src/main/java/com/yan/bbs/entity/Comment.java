@@ -12,6 +12,9 @@ import lombok.Data;
 import java.util.List;
 
 /**
+ *
+ * 评论表
+ *
  * @author yanshuang
  * @date 2023/4/28 21:41
  */

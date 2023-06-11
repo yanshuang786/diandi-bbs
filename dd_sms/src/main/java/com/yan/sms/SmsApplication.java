@@ -23,8 +23,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @ComponentScan(basePackages = {
         "com.yan.dd_common.utils",
         "com.yan.dd_common.redis",
+        "com.yan.dd_common.config",
         "com.yan.sms",
-        "com.yan.dd_common.feign.*",
+        "com.yan.dd_common.feign.fallback",
         "com.yan.bbs.mapper",
         "com.yan.bbs.service"
 })

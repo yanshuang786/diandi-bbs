@@ -47,47 +47,4 @@ public interface SearchFeignClient {
     @PostMapping("/search/addElasticSearchIndexByUid")
     public String addElasticSearchIndexByUid(@RequestParam(required = true) String uid);
 
-
-    /**
-     * 通过博客uid删除Solr博客索引
-     *
-     * @param uid
-     * @return
-     */
-    @PostMapping("/search/deleteSolrIndexByUid")
-    public String deleteSolrIndexByUid(@RequestParam(required = true) String uid);
-
-    /**
-     * 通过uids删除Solr博客索引
-     *
-     * @param uids
-     * @return
-     */
-    @PostMapping("/search/deleteSolrIndexByUids")
-    public String deleteSolrIndexByUids(@RequestParam(required = true) String uids);
-
-    /**
-     * 初始化Solr索引
-     *
-     * @return
-     */
-    @PostMapping("/search/initSolrIndex")
-    public String initSolrIndex();
-
-    /**
-     * 通过uid来增加Solr索引
-     *
-     * @return
-     */
-    @PostMapping("/search/addSolrIndexByUid")
-    public String addSolrIndexByUid(@RequestParam(required = true) String uid);
-
-    /**
-     * 通过uid来更新Solr索引
-     *
-     * @return
-     */
-    @PostMapping("/search/updateSolrIndexByUid")
-    public String updateSolrIndexByUid(@RequestParam(required = true) String uid);
-
 }

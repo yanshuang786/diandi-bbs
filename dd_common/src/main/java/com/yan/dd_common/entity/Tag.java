@@ -7,6 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 /**
+ *
+ * 标签表
+ *
  * @author yanshuang
  * @date 2023/4/27 15:52
  */

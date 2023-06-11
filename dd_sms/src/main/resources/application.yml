@@ -2,6 +2,8 @@ server:
   port: 8604
 
 spring:
+  main:
+    allow-bean-definition-overriding: true
   application:
     name: dd-sms
   datasource:

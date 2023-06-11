@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
 /**
+ * 博客分类表
+ *
  * @author yanshuang
  * @date 2023/4/27 15:52
  */

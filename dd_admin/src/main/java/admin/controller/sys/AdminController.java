@@ -53,7 +53,6 @@ public class AdminController extends BaseController {
     /**
      * 根据用户编号获取详细信息
      */
-//    @PreAuthorize("@ss.hasPermi('system:user:query')")
     @GetMapping(value = { "/", "/{userId}" })
     public R getInfo(@PathVariable(value = "userId", required = false) Long adminId) {
         adminService.checkAdminDataScope(adminId);
@@ -71,8 +70,6 @@ public class AdminController extends BaseController {
     /**
      * 新增用户
      */
-//    @PreAuthorize("@ss.hasPermi('system:user:add')")
-//    @Log(title = "用户管理", businessType = BusinessType.INSERT)
     @PostMapping
     public R add(@Validated @RequestBody Admin admin) {
         if (UserConstants.NOT_UNIQUE.equals(adminService.checkAdminNameUnique(admin.getAdminName()))) {
@@ -91,8 +88,6 @@ public class AdminController extends BaseController {
     /**
      * 修改管理员
      */
-//    @PreAuthorize("@ss.hasPermi('system:user:edit')")
-//    @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping
     public R edit(@Validated @RequestBody Admin admin) {
         adminService.checkAdminAllowed(admin);
@@ -111,8 +106,6 @@ public class AdminController extends BaseController {
     /**
      * 状态修改
      */
-//    @PreAuthorize("@ss.hasPermi('system:user:edit')")
-//    @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping("/changeStatus")
     public R changeStatus(@RequestBody Admin admin) {
         adminService.checkAdminAllowed(admin);
@@ -126,8 +119,6 @@ public class AdminController extends BaseController {
      * @param userIds 管理员id
      * @return
      */
-//    @PreAuthorize("@ss.hasPermi('system:user:remove')")
-//    @Log(title = "用户管理", businessType = BusinessType.DELETE)
     @GetMapping("/remove/{userIds}")
     public R remove(@PathVariable Long[] userIds) {
         if (ArrayUtils.contains(userIds, getUserId())) {
@@ -138,8 +129,6 @@ public class AdminController extends BaseController {
     /**
      * 重置密码
      */
-//    @PreAuthorize("@ss.hasPermi('system:user:resetPwd')")
-//    @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping("/resetPwd")
     public R resetPwd(@RequestBody Admin admin) {
         adminService.checkAdminAllowed(admin);
@@ -152,7 +141,6 @@ public class AdminController extends BaseController {
     /**
      * 根据用户编号获取授权角色
      */
-//    @PreAuthorize("@ss.hasPermi('system:user:query')")
     @GetMapping("/authRole/{userId}")
     public R authRole(@PathVariable("userId") Long userId)
     {
@@ -168,8 +156,6 @@ public class AdminController extends BaseController {
      * 用户授权角色
      * 不完善
      */
-//    @PreAuthorize("@ss.hasPermi('system:user:edit')")
-//    @Log(title = "用户管理", businessType = BusinessType.GRANT)
     @PutMapping("/authRole")
     public R insertAuthRole(Long userId, Long[] roleIds) {
         adminService.insertAdminAuth(userId, roleIds);

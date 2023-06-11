@@ -76,7 +76,7 @@ public class WebConfigServiceImpl extends SuperServiceImpl<WebConfigMapper, WebC
     @Override
     public WebConfig getWebConfigByShowList() {
         //从Redis中获取IP来源
-        String webConfigResult = redisUtil.get(RedisConf.WEB_CONFIG);
+        String webConfigResult = (String) redisUtil.get(RedisConf.WEB_CONFIG);
         if (StringUtils.isNotEmpty(webConfigResult)) {
             WebConfig webConfig = JsonUtils.jsonToPojo(webConfigResult, WebConfig.class);
             return webConfig;
@@ -185,15 +185,13 @@ public class WebConfigServiceImpl extends SuperServiceImpl<WebConfigMapper, WebC
         // 修改配置后，清空Redis中的 WEB_CONFIG
         redisUtil.delete(RedisConf.WEB_CONFIG);
         // 同时清空Redis中的登录方式
-        Set<String> keySet = redisUtil.keys(RedisConf.LOGIN_TYPE + Constants.SYMBOL_STAR);
-        redisUtil.delete(keySet);
 
         return R.success(MessageConf.UPDATE_SUCCESS);
     }
 
     @Override
     public Boolean isOpenLoginType(String loginType) {
-        String loginTypeJson = redisUtil.get(RedisConf.LOGIN_TYPE + Constants.SYMBOL_COLON + loginType);
+        String loginTypeJson = (String) redisUtil.get(RedisConf.LOGIN_TYPE + Constants.SYMBOL_COLON + loginType);
         // 判断redis中是否包含该登录记录
         if(StringUtils.isNotEmpty(loginTypeJson)) {
             // 如果Redis中有内容，表示开启该登录方式
@@ -231,7 +229,7 @@ public class WebConfigServiceImpl extends SuperServiceImpl<WebConfigMapper, WebC
             }
         }
         // 再次判断该登录方式是否开启
-        loginTypeJson = redisUtil.get(RedisConf.LOGIN_TYPE + Constants.SYMBOL_COLON + loginType);
+        loginTypeJson =(String) redisUtil.get(RedisConf.LOGIN_TYPE + Constants.SYMBOL_COLON + loginType);
         if(StringUtils.isNotEmpty(loginTypeJson)) {
             return true;
         } else {

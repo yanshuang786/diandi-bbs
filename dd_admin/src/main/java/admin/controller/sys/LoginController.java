@@ -60,8 +60,7 @@ public class LoginController {
      */
     @GetMapping("getRouters")
     public R getRouters() {
-//        Long adminId = SecurityUtils.getAdminId();
-        Long adminId = 1L;
+        Long adminId = SecurityUtils.getLoginAdminId();
         List<SysMenu> menus = menuService.selectMenuTreeByAdminId(adminId);
         return R.success(menuService.buildMenus(menus));
     }

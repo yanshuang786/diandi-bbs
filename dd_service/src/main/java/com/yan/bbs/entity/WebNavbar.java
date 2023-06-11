@@ -10,6 +10,8 @@ import lombok.Data;
 import java.util.List;
 
 /**
+ * 导航栏管理
+ *
  * @author yanshuang
  * @date 2023/4/28 17:04
  */

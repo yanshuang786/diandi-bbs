@@ -1,5 +1,7 @@
 package com.yan.bbs.service.Impl;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.yan.dd_common.entity.User;
 import com.yan.bbs.mapper.UserMapper;
 import com.yan.bbs.service.UserService;
@@ -27,11 +29,6 @@ public class UserServiceImpl extends SuperServiceImpl<UserMapper, User> implemen
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private RedisUtil redisUtil;
-
-
-
     /**
      * 查询所有用户
      * @param user
@@ -41,13 +38,13 @@ public class UserServiceImpl extends SuperServiceImpl<UserMapper, User> implemen
     public List<User> selectUserList(User user) {
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         if(StringUtils.isNotNull(user.getUserName())){
-            queryWrapper.eq(User::getUserName,user.getUserName());
+            queryWrapper.like(User::getUserName,user.getUserName());
         }
         if(StringUtils.isNotNull(user.getStatus())){
             queryWrapper.eq(User::getStatus,user.getStatus());
         }
         if(StringUtils.isNotNull(user.getMobile())){
-            queryWrapper.eq(User::getMobile,user.getMobile());
+            queryWrapper.like(User::getMobile,user.getMobile());
         }
         if(StringUtils.isNotNull(user.getParams())){
             String a = (String) user.getParams().get("beginTime");
@@ -55,8 +52,7 @@ public class UserServiceImpl extends SuperServiceImpl<UserMapper, User> implemen
             queryWrapper.ge(User::getCreateTime,a);
             queryWrapper.le(User::getCreateTime,b);
         }
-        List<User> admins = this.baseMapper.selectList(queryWrapper);
-        return admins;
+        return this.baseMapper.selectList(queryWrapper);
     }
 
     @Override
@@ -127,16 +123,21 @@ public class UserServiceImpl extends SuperServiceImpl<UserMapper, User> implemen
 
     /**
      * 检查电话号是否重复
-     * @param user
-     * @return
+     * @param user 用户详情
+     * @return 是否重复
      */
     @Override
     public String checkPhoneUnique(User user) {
         Long userId = StringUtils.isNull(user.getUserId()) ? -1L : user.getUserId();
-
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(User::getMobile,user.getMobile());
-        User info = (User) this.baseMapper.selectList(queryWrapper);
+        List<User> users = this.baseMapper.selectList(queryWrapper);
+        if(users.size() > 1) {
+            return UserConstants.NOT_UNIQUE;
+        } else if(users.size() == 0) {
+            return UserConstants.UNIQUE;
+        }
+        User info = users.get(0);
         // 不是同一个人
         if (StringUtils.isNotNull(info) && info.getUserId().longValue() != userId.longValue()) {
             return UserConstants.NOT_UNIQUE;
@@ -173,12 +174,18 @@ public class UserServiceImpl extends SuperServiceImpl<UserMapper, User> implemen
      */
     @Override
     public int updateUserStatus(User user) {
-        return this.baseMapper.updateById(user);
+        LambdaUpdateWrapper<User> updateWrapper = new LambdaUpdateWrapper<User>();
+        updateWrapper.eq(User::getUserId, user.getUserId());
+        updateWrapper.set(User::getStatus, user.getStatus());
+        return this.baseMapper.update(null, updateWrapper);
     }
 
     @Override
     public int updateInterchangeCommentStatus(User user) {
-        return this.baseMapper.updateById(user);
+        LambdaUpdateWrapper<User> updateWrapper = new LambdaUpdateWrapper<User>();
+        updateWrapper.eq(User::getUserId, user.getUserId());
+        updateWrapper.set(User::getCommentStatus, user.getCommentStatus());
+        return this.baseMapper.update(null, updateWrapper);
     }
 
     @Override

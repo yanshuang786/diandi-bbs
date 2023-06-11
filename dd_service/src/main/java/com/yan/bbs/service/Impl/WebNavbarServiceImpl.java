@@ -64,6 +64,46 @@ public class WebNavbarServiceImpl extends SuperServiceImpl<WebNavbarMapper, WebN
         return list;
     }
 
+
+    /**
+     * 获取所有门户导航栏
+     *
+     * @return
+     */
+    public List<WebNavbar> getWebAllList(String isShow) {
+        QueryWrapper<WebNavbar> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(SQLConf.NAVBAR_LEVEL, Constants.STR_ONE);
+        queryWrapper.orderByDesc(SQLConf.SORT);
+        queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
+        queryWrapper.eq(SQLConf.IS_SHOW, isShow);
+
+        List<WebNavbar> list = webNavbarService.list(queryWrapper);
+        //获取所有的ID，去寻找他的子目录
+        List<Integer> ids = new ArrayList<>();
+        list.forEach(item -> {
+            if (StringUtils.isNotNull(item.getId())) {
+                ids.add(item.getId());
+            }
+        });
+        QueryWrapper<WebNavbar> childWrapper = new QueryWrapper<>();
+        childWrapper.in(SQLConf.PARENT_UID, ids);
+        childWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
+        Collection<WebNavbar> childList = webNavbarService.list(childWrapper);
+
+        // 给一级导航栏设置二级导航栏
+        for (WebNavbar parentItem : list) {
+            List<WebNavbar> tempList = new ArrayList<>();
+            for (WebNavbar item : childList) {
+                if (item.getParentUid().equals(parentItem.getId())) {
+                    tempList.add(item);
+                }
+            }
+            Collections.sort(tempList);
+            parentItem.setChildWebNavbar(tempList);
+        }
+        return list;
+    }
+
     @Override
     public int addWebNavbar(WebNavbarVO webNavbarVO) {
         //如果是一级菜单，将父ID清空

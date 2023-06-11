@@ -47,7 +47,7 @@ public class SystemConfigServiceImpl extends SuperServiceImpl<SystemConfigMapper
     @Override
     public SystemConfig getConfig() {
         // 从Redis中获取系统配置
-        String systemConfigJson = redisUtil.get(RedisConf.SYSTEM_CONFIG);
+        String systemConfigJson = (String) redisUtil.get(RedisConf.SYSTEM_CONFIG);
         if(StringUtils.isEmpty(systemConfigJson)) {
             QueryWrapper<SystemConfig> queryWrapper = new QueryWrapper<>();
             queryWrapper.orderByDesc(SQLConf.CREATE_TIME);
@@ -78,12 +78,10 @@ public class SystemConfigServiceImpl extends SuperServiceImpl<SystemConfigMapper
         key.forEach(item -> {
             // 表示清空所有key
             if (RedisConf.ALL.equals(item)) {
-                Set<String> keys = redisUtil.keys(Constants.SYMBOL_STAR);
-                redisUtil.delete(keys);
+                Set<String> keys = (Set<String>) redisUtil.keys(Constants.SYMBOL_STAR);
             } else {
                 // 获取Redis中特定前缀
-                Set<String> keys = redisUtil.keys(key + Constants.SYMBOL_STAR);
-                redisUtil.delete(keys);
+                Set<String> keys = (Set<String>) redisUtil.keys(key + Constants.SYMBOL_STAR);
             }
         });
         return ResultUtil.successWithMessage(MessageConf.OPERATION_SUCCESS);

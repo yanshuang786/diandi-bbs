@@ -40,7 +40,6 @@ public class RoleController extends BaseController {
      * @param role 角色搜索信息
      * @return 分页角色
      */
-//    @PreAuthorize("@ss.hasPermi('system:role:list')")
     @GetMapping("/list")
     public TableDataInfo lists(SysRole role) {
         IPage<SysRole> list = roleService.selectRoleList(role);
@@ -54,7 +53,6 @@ public class RoleController extends BaseController {
     /**
      * 根据角色编号获取详细信息
      */
-//    @PreAuthorize("@ss.hasPermi('system:role:query')")
     @GetMapping(value = "/{roleId}")
     public R getInfo(@PathVariable Long roleId) {
         roleService.checkRoleDataScope(roleId);
@@ -64,8 +62,6 @@ public class RoleController extends BaseController {
     /**
      * 新增角色
      */
-//    @PreAuthorize("@ss.hasPermi('system:role:add')")
-//    @Log(title = "角色管理", businessType = LogType.INSERT)
     @PostMapping
     public R add(@Validated @RequestBody SysRole role) {
         // step1: 校验角色名是否合法
@@ -84,8 +80,6 @@ public class RoleController extends BaseController {
      *
      * 修改保存角色
      */
-//    @PreAuthorize("@ss.hasPermi('system:role:edit')")
-//    @Log(title = "角色管理", businessType = LogType.UPDATE)
     @PutMapping
     public R edit(@Validated @RequestBody SysRole role) {
         // 检查权限
@@ -115,8 +109,6 @@ public class RoleController extends BaseController {
      * @param role
      * @return
      */
-//    @PreAuthorize("@ss.hasPermi('system:role:edit')")
-//    @Log(title = "角色管理", businessType = LogType.UPDATE)
     @PutMapping("/changeStatus")
     public R changeStatus(@RequestBody SysRole role) {
         // 只有管理员次才能修改
@@ -127,8 +119,6 @@ public class RoleController extends BaseController {
     /**
      * 删除角色
      */
-//    @PreAuthorize("@ss.hasPermi('system:role:remove')")
-//    @Log(title = "角色管理", businessType = LogType.DELETE)
     @GetMapping("/remove/{roleIds}")
     public R remove(@PathVariable Long[] roleIds) {
         return toAjax(roleService.deleteRoleByIds(roleIds));
@@ -138,7 +128,6 @@ public class RoleController extends BaseController {
     /**
      * 查询已分配用户角色列表
      */
-//    @PreAuthorize("@ss.hasPermi('system:role:list')")
     @GetMapping("/authUser/allocatedList")
     public TableDataInfo allocatedList(Admin admin) {
         startPage();
@@ -149,7 +138,6 @@ public class RoleController extends BaseController {
     /**
      * 查询未分配用户角色列表
      */
-//    @PreAuthorize("@ss.hasPermi('system:role:list')")
     @GetMapping("/authUser/unallocatedList")
     public TableDataInfo unallocatedList(Admin admin) {
         startPage();
@@ -157,4 +145,11 @@ public class RoleController extends BaseController {
         return getDataTable(list);
     }
 
+
+//    @PutMapping("/authUser/selectAll")
+//    public R selectAuthUserAll(Long roleId, Long[] userIds)
+//    {
+//        roleService.checkRoleDataScope(roleId);
+//        return toAjax(roleService.insertAuthUsers(roleId, userIds));
+//    }
 }

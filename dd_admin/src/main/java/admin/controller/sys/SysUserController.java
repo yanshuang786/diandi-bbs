@@ -47,7 +47,6 @@ public class SysUserController extends BaseController {
     /**
      * 获取用户列表
      */
-//    @PreAuthorize("@ss.hasPermi('system:user:list')")
     @GetMapping("/list")
     public TableDataInfo list(User user) {
         startPage();
@@ -59,7 +58,6 @@ public class SysUserController extends BaseController {
     /**
      * 根据用户编号获取详细信息
      */
-//    @PreAuthorize("@ss.hasPermi('system:user:query')")
     @GetMapping(value = { "/", "/{userId}" })
     public R getInfo(@PathVariable(value = "userId", required = false) Long userId) {
         // 检查往前管理员是否有权限
@@ -70,7 +68,6 @@ public class SysUserController extends BaseController {
         ajax.put("roles", Admin.isAdmin(userId) ? roles : roles.stream().filter(r -> !r.isAdmin()).collect(Collectors.toList()));
         if (StringUtils.isNotNull(userId)) {
             ajax.put(R.DATA_TAG, userService.selectUserById(userId));
-            ajax.put("roleIds", roleService.selectRoleListByUserId(userId));
         }
         return ajax;
     }
@@ -78,8 +75,6 @@ public class SysUserController extends BaseController {
     /**
      * 新增用户
      */
-//    @PreAuthorize("@ss.hasPermi('system:user:add')")
-//    @Log(title = "用户管理", businessType = BusinessType.INSERT)
     @PostMapping
     public R add(@Validated @RequestBody User user) {
         if (UserConstants.NOT_UNIQUE.equals(userService.checkUserNameUnique(user.getUserName()))) {
@@ -99,8 +94,6 @@ public class SysUserController extends BaseController {
     /**
      * 修改用户
      */
-//    @PreAuthorize("@ss.hasPermi('system:user:edit')")
-//    @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping
     public R edit(@Validated @RequestBody User user) {
         if (StringUtils.isNotEmpty(user.getMobile())
@@ -117,8 +110,6 @@ public class SysUserController extends BaseController {
     /**
      * 删除用户
      */
-//    @PreAuthorize("@ss.hasPermi('system:user:remove')")
-//    @Log(title = "用户管理", businessType = BusinessType.DELETE)
     @GetMapping("/remove/{userIds}")
     public R remove(@PathVariable Long[] userIds)
     {
@@ -131,8 +122,6 @@ public class SysUserController extends BaseController {
     /**
      * 重置密码
      */
-//    @PreAuthorize("@ss.hasPermi('system:user:resetPwd')")
-//    @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping("/resetPwd")
     public R resetPwd(@RequestBody User user) {
         user.setPassWord(MD5Utils.string2MD5(user.getPassWord()));
@@ -142,16 +131,12 @@ public class SysUserController extends BaseController {
     /**
      * 状态修改
      */
-//    @PreAuthorize("@ss.hasPermi('system:user:edit')")
-//    @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping("/changeStatus")
     public R changeStatus(@RequestBody User user) {
         return toAjax(userService.updateUserStatus(user));
     }
 
 
-//    @PreAuthorize("@ss.hasPermi('system:user:edit')")
-//    @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping("/changeCStatus")
     public R changeCommentStatus(@RequestBody User user) {
         return toAjax(userService.updateInterchangeCommentStatus(user));
@@ -160,7 +145,6 @@ public class SysUserController extends BaseController {
     /**
      * 根据用户编号获取授权角色
      */
-//    @PreAuthorize("@ss.hasPermi('system:user:query')")
     @GetMapping("/authRole/{userId}")
     public R authRole(@PathVariable("userId") Long userId)
     {
@@ -175,8 +159,6 @@ public class SysUserController extends BaseController {
     /**
      * 用户授权角色
      */
-//    @PreAuthorize("@ss.hasPermi('system:user:edit')")
-//    @Log(title = "用户管理", businessType = BusinessType.GRANT)
     @PutMapping("/authRole")
     public R insertAuthRole(Long userId, Long[] roleIds) {
         return R.success(userService.insertUserAuth(userId, roleIds));
